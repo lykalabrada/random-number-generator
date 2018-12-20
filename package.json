@@ -2,7 +2,7 @@
   "name": "randomnumber",
   "version": "1.0.0",
   "description": "A simple app that generates a random number and limit the requests",
-  "main": "server.js",
+  "main": "app.js",
   "scripts": {
     "start": "node app.js",
     "server": "nodemon app.js"
@@ -11,7 +11,6 @@
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.18.3",
-    "concurrently": "^4.1.0",
     "express": "^4.16.4",
     "mongoose": "^5.4.0"
   },

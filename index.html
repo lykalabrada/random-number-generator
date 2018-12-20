@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <title>Random Number Generator</title>
+  </head>
+  <body>
+    <div class="container">
+      <h1 class="display-4 mb-4">Random Number Generator</h1>
+      <button class="btn btn-primary mr-4" type="button" id="genBtn" onClick="generateNum()">GENERATE RANDOM NUMBER</button>
+      <button class="btn btn-success mr-4" type="button" id="listBtn" onClick="getRequests()">View Logs</button>
+
+      <hr>
+      <div id="output"></div>
+    </div>
+
+    <script>
+      const generateNum = async () => {
+        const res = await fetch('/api/requests/generate')
+        const data = await res.json()
+        let output = ''
+        if(data.error) {
+          if(data.error == 'exceeded_maximum_allowed_requests')
+            output = "Ooops. Maximum of 5 requests per minute exceeded."
+          else
+            output = data.error
+        }
+        else {
+          output = `
+            <div class="card card-body d-inline-block">
+              <span>Your random number is: </span><br>
+              <h1 class='d-inline display-4'>${data.random_number}</h1>
+            </div>`
+        }
+        document.getElementById('output').innerHTML = output
+      }
+
+      const getRequests = async () => {
+        try {
+          const res = await fetch(`/api/requests`)
+          const data = await res.json()
+          let output = '<h2>Requests</h2>'
+          data.forEach((request) => {
+            const status = request.allowed?'success':'danger'
+            const formattedDate = new Date(request.date).toLocaleString('en-US')
+            output += `
+              <ul class="list-group mb-3">
+                <li class="list-group-item">IP Address: <b>${request.IPAddress}</b></li>
+                <li class="list-group-item">Status: <span class="badge badge-${status}"><b>${request.allowed?'Allowed':'Denied'}</b></span></li>
+                <li class="list-group-item">Date: <b>${formattedDate}</b></li>
+              </ul>
+            `
+          })
+          document.getElementById('output').innerHTML = output
+        } catch (e) {
+          document.getElementById('output').innerHTML = 'Something went wrong. Please contact your administrator'
+        }
+      }
+    </script>
+  </body>
+</html>

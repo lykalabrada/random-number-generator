@@ -17,8 +17,13 @@ mongoose.connect(db)
   .then(() => console.log('MongoDB Connected...'))
   .catch(err => console.log(err))
 
-// routes
+app.get('/', function(req,res) {
+  res.sendFile(__dirname + '/index.html');
+})
+
+// API routes
 app.use('/api/requests', requests)
+
 
 const port = process.env.PORT || 5000
 

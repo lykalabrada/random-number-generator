@@ -14,9 +14,9 @@ router.get('/generate', async (req, res) => {
     const allowed = await checkRequestLimit(IPAddress)
     Requests.create({IPAddress, allowed})
     if(!allowed) {
-      res.status(400).send(JSON.stringify({error: 'exceeded_maximum_allowed_requests'}))
+      return res.status(400).send(JSON.stringify({error: 'exceeded_maximum_allowed_requests'}))
     }
-    res.status(200).send(JSON.stringify({random_number}))
+    return res.status(200).send(JSON.stringify({random_number}))
   } catch (e) {
     res.status(400).send(JSON.stringify({error:'something_went_wrong'}))
   }
@@ -25,24 +25,29 @@ router.get('/generate', async (req, res) => {
 router.get('/', async (req, res) => {
   try {
     const data = await Requests.find().sort({date: -1}).lean()
-    res.status(200).send(JSON.stringify({data}))
+    res.status(200).send(JSON.stringify(data))
   } catch (e) {
     res.status(400).send(JSON.stringify({error:'something_went_wrong'}))
   }
 })
 
 const checkRequestLimit = async(IPAddress) => {
-  const reqCount = await Requests.find(
-    {
-      IPAddress,
-      allowed:true,
-      date:{ $gt: new Date(new Date().getTime() - 1000 * 60 * reqInterval) }
-    }
-  ).count()
-  if(reqCount >= maxAllowedRequest)
-    return false
-  else
-    return true
+  try {
+    const reqCount = await Requests.find(
+      {
+        IPAddress,
+        allowed:true,
+        date:{ $gt: new Date(new Date().getTime() - 1000 * 60 * reqInterval) }
+      }
+    ).count()
+    if(reqCount >= maxAllowedRequest)
+      return false
+    else
+      return true
+  } catch (e) {
+    console.log(e)
+    throw new Error('something_went_wrong')
+  }
 }
 
 module.exports = router
