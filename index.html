@@ -47,6 +47,7 @@
             const formattedDate = new Date(request.date).toLocaleString('en-US')
             output += `
               <ul class="list-group mb-3">
+                <li class="list-group-item">Generated Number: <b>${request.random_number>0?request.random_number:'Not Applicable'}</b></li>
                 <li class="list-group-item">IP Address: <b>${request.IPAddress}</b></li>
                 <li class="list-group-item">Status: <span class="badge badge-${status}"><b>${request.allowed?'Allowed':'Denied'}</b></span></li>
                 <li class="list-group-item">Date: <b>${formattedDate}</b></li>

@@ -12,7 +12,7 @@ router.get('/generate', async (req, res) => {
     if(IPAddress == '::1') IPAddress = '127.0.0.1'
 
     const allowed = await checkRequestLimit(IPAddress)
-    Requests.create({IPAddress, allowed})
+    Requests.create({IPAddress, allowed, random_number})
     if(!allowed) {
       return res.status(400).send(JSON.stringify({error: 'exceeded_maximum_allowed_requests'}))
     }

@@ -13,6 +13,10 @@ const RequestSchema = new Schema({
   date: {
     type: Date,
     default: Date.now
+  },
+  random_number: {
+    type: Number,
+    default: 0
   }
 })
 
